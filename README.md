@@ -1,6 +1,6 @@
 # Web Application with Go
 
-## Hello World
+## Start server
 
 ```go
 package main
