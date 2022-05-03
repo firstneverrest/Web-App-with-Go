@@ -21,11 +21,15 @@ func main() {
 	}
 
 	app.TemplateCache = tc
+	app.UseCache = true
+
+	repo := handlers.NewRepo(&app)
+	handlers.NewHandlers(repo)
 
 	render.NewTemplate(&app)
 
-	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/about", handlers.About)
+	http.HandleFunc("/", handlers.Repo.Home)
+	http.HandleFunc("/about", handlers.Repo.About)
 
 	slicePortNumber := portNumber[1:]
 	fmt.Printf("Server is listening on port %s\n", slicePortNumber)

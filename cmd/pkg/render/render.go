@@ -22,7 +22,12 @@ func NewTemplate(a *config.AppConfig) {
 // render the template with the data
 func RenderTemplate(w http.ResponseWriter, name string) {
 	// get the template cache from the app config
-	tc := app.TemplateCache
+	var tc map[string]*template.Template
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
+	}
 
 	t, ok := tc[name] // if found t = value, ok = true but if not found t = nil, ok = false
 	if !ok {
