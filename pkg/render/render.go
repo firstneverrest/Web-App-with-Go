@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/firstneverrest/go-web-app/cmd/pkg/config"
+	"github.com/firstneverrest/go-web-app/pkg/config"
+	"github.com/firstneverrest/go-web-app/pkg/models"
 )
 
 var functions = template.FuncMap{}
@@ -19,8 +20,12 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
+func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+	return td
+}
+
 // render the template with the data
-func RenderTemplate(w http.ResponseWriter, name string) {
+func RenderTemplate(w http.ResponseWriter, name string, td *models.TemplateData) {
 	// get the template cache from the app config
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -35,7 +40,8 @@ func RenderTemplate(w http.ResponseWriter, name string) {
 	}
 
 	buf := new(bytes.Buffer)
-	_ = t.Execute(buf, nil)
+	td = AddDefaultData(td)
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 	if err != nil {
@@ -55,7 +61,6 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	// loop every html pages in templates folder
 	for _, page := range pages {
 		name := filepath.Base(page)
-
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
 		if err != nil {
 			return myCache, err
