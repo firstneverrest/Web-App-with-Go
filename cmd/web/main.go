@@ -7,12 +7,13 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/firstneverrest/go-web-app/pkg/config"
-	"github.com/firstneverrest/go-web-app/pkg/handlers"
-	"github.com/firstneverrest/go-web-app/pkg/render"
+	"github.com/firstneverrest/go-web-app/internal/config"
+	"github.com/firstneverrest/go-web-app/internal/handlers"
+	"github.com/firstneverrest/go-web-app/internal/render"
 )
 
-const portNumber = ":8080"
+// const portNumber = ":8080"
+const portNumber = "localhost:8080"
 
 var app config.AppConfig
 var session *scs.SessionManager
@@ -43,8 +44,7 @@ func main() {
 
 	render.NewTemplate(&app)
 
-	slicePortNumber := portNumber[1:]
-	fmt.Printf("Server is listening on http://localhost:%s\n", slicePortNumber)
+	fmt.Printf("Server is listening on http://%s\n", portNumber)
 
 	server := &http.Server{
 		Addr:    portNumber,

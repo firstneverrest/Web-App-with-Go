@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/firstneverrest/go-web-app/pkg/config"
-	"github.com/firstneverrest/go-web-app/pkg/models"
+	"github.com/firstneverrest/go-web-app/internal/config"
+	"github.com/firstneverrest/go-web-app/internal/models"
+	"github.com/justinas/nosurf"
 )
 
 var functions = template.FuncMap{}
@@ -20,12 +21,13 @@ func NewTemplate(a *config.AppConfig) {
 	app = a
 }
 
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
 // render the template with the data
-func RenderTemplate(w http.ResponseWriter, name string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, name string, td *models.TemplateData) {
 	// get the template cache from the app config
 	var tc map[string]*template.Template
 	if app.UseCache {
@@ -40,7 +42,7 @@ func RenderTemplate(w http.ResponseWriter, name string, td *models.TemplateData)
 	}
 
 	buf := new(bytes.Buffer)
-	td = AddDefaultData(td)
+	td = AddDefaultData(td, r)
 	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)

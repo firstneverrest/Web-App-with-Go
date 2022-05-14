@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/firstneverrest/go-web-app/pkg/config"
-	"github.com/firstneverrest/go-web-app/pkg/handlers"
+	"github.com/firstneverrest/go-web-app/internal/config"
+	"github.com/firstneverrest/go-web-app/internal/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -18,5 +18,10 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/", handlers.Repo.Home)
 	mux.Get("/about", handlers.Repo.About)
+	mux.Post("/coffee", handlers.Repo.BuyCoffee)
+
+	// enable static files
+	fileServer := http.FileServer(http.Dir("./static/"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 	return mux
 }
